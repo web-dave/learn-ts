@@ -10,16 +10,32 @@
         background-color: #1d1d1d;
         margin: 0px;
       }
+      label{
+        color: white;
+        font-size: 200px;
+      }
+      button{
+        font-size: 150px;
+      }
+      .slotmachine {
+        position: absolute;
+    width: 100%;
+    left: 0px;
+    text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div>
-      <canvas
-        id="myCanvas"
-        width="100"
-        height="100"
-        style="background-color: #1d1d1d"
-      ></canvas>
+    <div  class="slotmachine">
+      <div class="slots">
+        <label >-</label>
+        <label >-</label>
+        <label >-</label>
+        <label >-</label>
+      </div>
+      <button>RUN</button>
+      <br>
+<label class="guthaben">💸<span></span></label>
     </div>
     <script src="./game-bundle.js"></script>
   </body>
