@@ -1,20 +1,21 @@
-export class Player {
+import { Item } from './item';
+
+export type Direction = 1 | 0 | -1;
+
+export class Player extends Item {
   private step = 150;
   constructor(
-    private height: number,
-    private width: number,
-    private x: number,
-    private y: number,
-    private ctx: CanvasRenderingContext2D
+    height: number,
+    width: number,
+    x: number,
+    y: number,
+    ctx: CanvasRenderingContext2D
   ) {
+    super(height, width, x, y, ctx, 'yellow');
     this.step = width;
   }
-  run(direction: number) {
+  walk(direction: Direction) {
     this.x += direction * this.step;
     this.draw();
-  }
-  draw() {
-    this.ctx.fillStyle = 'yellow';
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }
