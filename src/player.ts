@@ -12,14 +12,39 @@ export class Player {
   wayY = 0;
   w = blockSize;
   h = blockSize;
+  sprite;
+  movementDirection = 'up';
   constructor(
     public x: number,
     public y: number,
     private ctx: CanvasRenderingContext2D
-  ) {}
+  ) {
+    const _sprite = new Image();
+    _sprite.src = './player.png';
+    _sprite.onload = () => (this.sprite = _sprite);
+  }
   run(x: number, y: number) {
     this.wayX = x;
     this.wayY = y;
+
+    // x => horry => width
+    // y => verty => height
+    switch (this.wayX) {
+      case -10:
+        this.movementDirection = 'left';
+        break;
+      case 10:
+        this.movementDirection = 'right';
+        break;
+    }
+    switch (this.wayY) {
+      case -10:
+        this.movementDirection = 'up';
+        break;
+      case 10:
+        this.movementDirection = 'down';
+        break;
+    }
   }
 
   draw() {
@@ -38,8 +63,11 @@ export class Player {
       this.y = canvasHeight - this.h;
     }
 
-    this.ctx.fillStyle = 'blue';
-    this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    // this.ctx.fillStyle = 'blue';
+    // this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    if (this.sprite) {
+      this.ctx.drawImage(this.sprite, this.x, this.y);
+    }
   }
 
   collide(o: Obstacle) {
@@ -49,10 +77,7 @@ export class Player {
     const ORX = this.x + this.w >= o.x && this.x + this.w <= o.x + o.w;
     const ORY = this.y + this.h >= o.y && this.y + this.h <= o.y + o.h;
 
-    o.color = '#1ABC9C';
-    if ((OLX && OLY) || (ORX && ORY) || (OLX && ORY) || (ORX && OLY)) {
-      o.color = '#FD301A';
-    }
+    return (OLX && OLY) || (ORX && ORY) || (OLX && ORY) || (ORX && OLY);
   }
   collect(f: Food) {
     const OLX = this.x + this.w / 2 >= f.x && this.x + this.w / 2 <= f.x + f.w;

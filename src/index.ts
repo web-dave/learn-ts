@@ -5,17 +5,22 @@ import { Player } from './player';
 
 // Import stylesheets
 const blockSize = 50;
-const display = document.querySelector('canvas');
+let painCounter = 0;
+let itemCounter = 0;
+const timeout = 42;
+let TimeStarted = false;
+let stop = false;
+const display = document.querySelector('.display');
 
 const height = innerHeight - 150;
 const width = innerWidth - 5;
-const bloxY = parseInt((width / blockSize).toFixed(0), 10);
-const bloxX = parseInt((height / blockSize).toFixed(0), 10);
+const bloxY = parseInt((height / blockSize).toFixed(0), 10);
+const bloxX = parseInt((width / blockSize).toFixed(0), 10);
 
 const canvas = document.querySelector('canvas');
-saveCanvasSize(bloxX * blockSize, bloxY * blockSize);
-canvas.height = bloxX * blockSize;
-canvas.width = bloxY * blockSize;
+saveCanvasSize(bloxY * blockSize, bloxX * blockSize);
+canvas.height = bloxY * blockSize;
+canvas.width = bloxX * blockSize;
 const ctx = canvas.getContext('2d');
 
 const player = new Player(width / 2, height / 2, ctx);
@@ -32,7 +37,7 @@ for (let f of foodList) {
     )
   );
 }
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
   obstacles.push(
     new Obstacle(
       parseInt((Math.random() * bloxX).toFixed()) * blockSize,
@@ -41,42 +46,52 @@ for (let i = 0; i < 20; i++) {
     )
   );
 }
-
 document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-  switch (event.keyCode) {
-    case 37:
+  if (!TimeStarted) {
+    TimeStarted = true;
+    setTimeout(() => {
+      stop = true;
+    }, timeout * 500);
+  }
+  console.log(stop);
+  if (stop) {
+    player.run(0, 0);
+    return;
+  }
+  switch (event.key) {
+    case 'ArrowLeft':
       //left
       player.run(-10, 0);
       break;
-    case 38:
+    case 'ArrowUp':
       //top
       player.run(0, -10);
       break;
-    case 39:
+    case 'ArrowRight':
       //right
       player.run(10, 0);
       break;
-    case 40:
+    case 'ArrowDown':
       //down
       player.run(0, 10);
       break;
   }
 });
 document.body.addEventListener('keyup', (event: KeyboardEvent) => {
-  switch (event.keyCode) {
-    case 37:
+  switch (event.key) {
+    case 'ArrowLeft':
       //left
       player.run(0, 0);
       break;
-    case 38:
+    case 'ArrowUp':
       //top
       player.run(0, 0);
       break;
-    case 39:
+    case 'ArrowRight':
       //right
       player.run(0, 0);
       break;
-    case 40:
+    case 'ArrowDown':
       //down
       player.run(0, 0);
       break;
@@ -85,32 +100,50 @@ document.body.addEventListener('keyup', (event: KeyboardEvent) => {
 
 const draw = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  for (let o of obstacles) {
-    player.collide(o);
-    o.draw();
-  }
-  for (let [i, f] of foods.entries()) {
-    if (player.collect(f)) {
-      foods.splice(i, 1);
-    } else {
-      f.draw();
-    }
-  }
-  for (let i = 0; i < bloxX; i++) {
+  for (let i = 0; i < bloxY; i++) {
     ctx.beginPath();
     ctx.moveTo(0, i * blockSize);
     ctx.lineTo(canvasWidth, i * blockSize);
     ctx.stroke();
   }
-  for (let i = 0; i < bloxY; i++) {
+  for (let i = 0; i < bloxX; i++) {
     ctx.beginPath();
     ctx.moveTo(i * blockSize, 0);
     ctx.lineTo(i * blockSize, canvasHeight);
     ctx.stroke();
   }
+  for (let o of obstacles) {
+    let color = '#1ABC9C';
+    if (player.collide(o)) {
+      color = '#FD301A';
+      if (o.color !== color) {
+        painCounter++;
+        console.log(painCounter);
+      }
+    }
+    o.color = color;
+    o.draw();
+  }
+  foods.forEach((f, i) => {
+    if (player.collect(f)) {
+      itemCounter++;
+      foods.splice(i, 1);
+    } else {
+      f.draw();
+    }
+  });
+
   player.draw();
+  display.innerHTML = 'Counter: ' + painCounter;
+  displayResults(painCounter, itemCounter, stop);
 };
 
-// draw();
+function displayResults(p: number, i: number, done: boolean) {
+  display.innerHTML = `
+    ${done ? 'Finale Result:' : ''}
+      Counter: ${p} 
+      Items: ${i}
+    `;
+}
 
 setInterval(() => draw(), 50);
