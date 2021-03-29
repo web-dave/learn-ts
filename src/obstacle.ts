@@ -1,6 +1,8 @@
 import { blockSize } from './globals';
 
 export class Obstacle {
+  img = ['🪑', '🛋️', '🛏️', '🧱', '💣'];
+  collission = '💥';
   h = blockSize;
   w = blockSize;
   color = 'brown';

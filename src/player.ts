@@ -8,6 +8,7 @@ import { Obstacle } from './obstacle';
 // y => verty
 
 export class Player {
+  animation: string[] = ['🧍‍♂️', '🚶‍♂️', '🏃‍♂️'];
   wayX = 0;
   wayY = 0;
   w = blockSize;
