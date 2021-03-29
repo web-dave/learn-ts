@@ -7,10 +7,12 @@ import { Player } from './player';
 const blockSize = 50;
 let painCounter = 0;
 let itemCounter = 0;
-const timeout = 42;
 let TimeStarted = false;
 let stop = false;
+let intervalCounter = 42;
+let gameInterval;
 const display = document.querySelector('.display');
+const timer = document.querySelector('h5');
 
 const height = innerHeight - 150;
 const width = innerWidth - 5;
@@ -37,11 +39,12 @@ for (let f of foodList) {
     )
   );
 }
-for (let i = 0; i < 100; i++) {
+
+for (let i = 0; i < bloxX + bloxY; i++) {
   obstacles.push(
     new Obstacle(
-      parseInt((Math.random() * bloxX).toFixed()) * blockSize,
-      parseInt((Math.random() * bloxY).toFixed()) * blockSize,
+      parseInt((Math.random() * bloxX).toFixed()) * blockSize + blockSize / 2,
+      parseInt((Math.random() * bloxY).toFixed()) * blockSize + blockSize / 2,
       ctx
     )
   );
@@ -49,11 +52,15 @@ for (let i = 0; i < 100; i++) {
 document.body.addEventListener('keydown', (event: KeyboardEvent) => {
   if (!TimeStarted) {
     TimeStarted = true;
-    setTimeout(() => {
-      stop = true;
-    }, timeout * 500);
+    gameInterval = setInterval(() => {
+      intervalCounter--;
+      timer.innerHTML = 'Time: ' + intervalCounter;
+      if (intervalCounter <= 0) {
+        stop = true;
+        clearInterval(gameInterval);
+      }
+    }, 300);
   }
-  console.log(stop);
   if (stop) {
     player.run(0, 0);
     return;
@@ -113,15 +120,14 @@ const draw = () => {
     ctx.stroke();
   }
   for (let o of obstacles) {
-    let color = '#1ABC9C';
+    let icon = o.icon;
     if (player.collide(o)) {
-      color = '#FD301A';
-      if (o.color !== color) {
+      icon = o.collission;
+      if (o.icon !== icon) {
         painCounter++;
-        console.log(painCounter);
       }
     }
-    o.color = color;
+    o.icon = icon;
     o.draw();
   }
   foods.forEach((f, i) => {
@@ -134,14 +140,13 @@ const draw = () => {
   });
 
   player.draw();
-  display.innerHTML = 'Counter: ' + painCounter;
   displayResults(painCounter, itemCounter, stop);
 };
 
 function displayResults(p: number, i: number, done: boolean) {
   display.innerHTML = `
     ${done ? 'Finale Result:' : ''}
-      Counter: ${p} 
+      Collitions: ${p} 
       Items: ${i}
     `;
 }

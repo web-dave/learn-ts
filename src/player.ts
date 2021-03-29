@@ -8,13 +8,14 @@ import { Obstacle } from './obstacle';
 // y => verty
 
 export class Player {
-  animation: string[] = ['🧍‍♂️', '🚶‍♂️', '🏃‍♂️'];
   wayX = 0;
   wayY = 0;
   w = blockSize;
   h = blockSize;
   sprite;
-  movementDirection = 'up';
+  movementDirection = '';
+  animationIndex = 0;
+  animationDirection = 0;
   constructor(
     public x: number,
     public y: number,
@@ -33,18 +34,25 @@ export class Player {
     switch (this.wayX) {
       case -10:
         this.movementDirection = 'left';
+        this.animationDirection = 0;
         break;
       case 10:
         this.movementDirection = 'right';
+        this.animationDirection = 50;
         break;
     }
     switch (this.wayY) {
       case -10:
         this.movementDirection = 'up';
+        this.animationDirection = 0;
         break;
       case 10:
         this.movementDirection = 'down';
+        this.animationDirection = 50;
         break;
+    }
+    if (this.wayX === 0 && this.wayY === 0) {
+      this.movementDirection = '';
     }
   }
 
@@ -64,10 +72,24 @@ export class Player {
       this.y = canvasHeight - this.h;
     }
 
-    // this.ctx.fillStyle = 'blue';
-    // this.ctx.fillRect(this.x, this.y, this.w, this.h);
+    if (this.movementDirection !== '') {
+      this.animationIndex = this.animationIndex === 0 ? 50 : 0;
+    } else {
+      this.animationIndex = 0;
+      this.animationDirection = 100;
+    }
     if (this.sprite) {
-      this.ctx.drawImage(this.sprite, this.x, this.y);
+      this.ctx.drawImage(
+        this.sprite,
+        this.animationIndex,
+        this.animationDirection,
+        this.w,
+        this.h,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
     }
   }
 

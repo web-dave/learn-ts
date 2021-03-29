@@ -9,16 +9,7 @@ export const saveCanvasSize = (h: number, w: number) => {
   canvasWidth = w;
 };
 
-export const foodList = [
-  '🍇',
-  '🍺',
-  '🍕',
-  '🥚',
-  '🥞',
-  '☕',
-  '🍉',
-  '🍹',
-  '📱',
-  '🩰',
-  '👖',
-];
+export const foodList = ['🍇', '🍺', '🍕', '🥚', '🥞', '☕', '🍉', '🍹'];
+// '📱',
+// '🩰',
+// '👖',
